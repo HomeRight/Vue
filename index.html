@@ -1,37 +1,393 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>createApp & setup</title>
 
-<head>
-    <link rel="stylesheet" href="index.css">
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-</head>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <div id="app" class="container">
+      <form id="addData" @submit="addProduct">
+        <div>
+          <label for="productName">productName</label>
+          <input type="text" name="productName" />
+        </div>
 
-<body>
+        <div>
+          <label for="price">price</label>
+          <input type="text" name="price" />
+        </div>
 
-    <div id="app">
-        {{ message }}
-        <span v-if="seen">Now you see</span>
+        <div>
+          <label for="lastAmount">lastAmount</label>
+          <input type="text" name="lastAmount" />
+        </div>
 
-        <ol>
-            <li v-for="todo in todos">
-                {{ todo.text }}
-            </li>
-        </ol>
+        <div>
+          <label for="masterCategory">masterCategory</label>
+          <input type="text" name="masterCategory" />
+        </div>
 
-        <button v-on:click="reserveWord">Reserve word</button>
+        <button type="submit" class="btn btn-primary mb-2">addProduct</button>
+      </form>
+
+      <form class="form-inline" id="product" @submit="showProduct">
+        <label class="sr-only" for="masterCategory">Name</label>
+        <input type="text" name="masterCategory" />
+
+        <button type="submit" class="btn btn-primary mb-2">show</button>
+      </form>
+      <ul>
+        <li v-for="(list, idx) in listArr">
+          {{idx+1}},{{list.productName}},{{list.price}},{{list.lastAmount}},{{list.createDate}},{{list.updateDate}}
+          <button
+            type="submit"
+            class="btn btn-primary mb-2"
+            @click="deleteProduct"
+            :value="list.id"
+          >
+            delete
+          </button>
+
+          <!-- Button trigger modal -->
+          <button
+            type="submit"
+            class="btn btn-primary mb-2"
+            data-toggle="modal"
+            data-target="#exampleModal"
+            @click="findById"
+            :value="list.id"
+          >
+            edit
+          </button>
+
+          <!-- Modal -->
+          <div
+            class="modal fade"
+            id="exampleModal"
+            tabindex="-1"
+            role="dialog"
+            aria-labelledby="exampleModalLabel"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">
+                    Modal title
+                  </h5>
+                  <button
+                    type="button"
+                    class="close"
+                    data-dismiss="modal"
+                    aria-label="Close"
+                  >
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <form id="editData" v-for="(list, idx) in findByIdArr">
+                    <div>
+                      <label for="id">id</label>
+                      <input type="text" name="id" :value="list.id" />
+                    </div>
+                    <div>
+                      <label for="productName">productName</label>
+                      <input
+                        type="text"
+                        name="productName"
+                        :value="list.productName"
+                      />
+                    </div>
+
+                    <div>
+                      <label for="price">price</label>
+                      <input type="text" name="price" :value="list.price" />
+                    </div>
+
+                    <div>
+                      <label for="lastAmount">lastAmount</label>
+                      <input
+                        type="text"
+                        name="lastAmount"
+                        :value="list.lastAmount"
+                      />
+                    </div>
+
+                    <div>
+                      <label for="masterCategory">masterCategory</label>
+                      <input
+                        type="text"
+                        name="masterCategory"
+                        :value="list.masterCategory"
+                      />
+                    </div>
+                  </form>
+                </div>
+                <div class="modal-footer">
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-dismiss="modal"
+                  >
+                    Close
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-primary"
+                    form="editData"
+                    @click="editProduct"
+                  >
+                    Save changes
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </li>
+      </ul>
     </div>
+    <script
+      src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+      integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+      crossorigin="anonymous"
+    ></script>
+    <script src="./js/vue.js"></script>
+    <script>
+      const App = {
+        setup() {
+          const { reactive } = Vue;
 
-    <div id="test">
-        {{ test  }}
-    </div>
+          const listArr = reactive([]);
+          const findByIdArr = reactive([]);
 
-    <div id="app-2">
-        <span v-bind:title="message">
-            Hover your mouse over me for a few seconds
-            to see my dynamically bound title12kkkkkkkkkkkkkk!
-        </span>
-    </div>
+          const addProduct = () => {
+            let addData = new FormData(document.getElementById("addData"));
 
-    <script src="index.js"></script>
-</body>
+            let addDataObj = {};
+            addData.forEach((value, key) => (addDataObj[key] = value));
 
+            let addDataJson = JSON.stringify(addDataObj);
+
+            fetch("http://localhost:8080/products", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: addDataJson,
+            })
+              .then((res) => {
+                return res.json();
+              })
+              .then((result) => {
+                console.log(result);
+              });
+          };
+
+          const editProduct = () => {
+            let editData = new FormData(document.getElementById("editData"));
+            console.log("editData" + editData);
+
+            let editDataObj = {};
+            editData.forEach((value, key) => (editDataObj[key] = value));
+
+            console.log("editData" + editData);
+
+            let editDataJson = JSON.stringify(editDataObj);
+            console.log("editDataJson" + editDataJson);
+
+            fetch("http://localhost:8080/products/" + editDataObj.id, {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: editDataJson,
+            })
+              .then((response) => response.json())
+              .then((myJson) => alert(myJson.message));
+          };
+
+          const findById = (event) => {
+            findByIdArr.splice(0, findByIdArr.length);
+            let id = event.target.value;
+
+            console.log("id:" + event.target.value);
+
+            let object = {};
+
+            object["id"] = id;
+
+            let json = JSON.stringify(object);
+
+            fetch("http://localhost:8080/products/all", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: json,
+            })
+              .then((res) => {
+                return res.json();
+              })
+              .then((result) => {
+                console.log(result);
+                result.forEach((c) => {
+                  let createDate = new Date(c.createDate);
+                  let updateDate = new Date(c.updateDate);
+
+                  hr = ("0" + createDate.getHours()).slice(-2);
+                  min = ("0" + createDate.getMinutes()).slice(-2);
+                  sec = ("0" + createDate.getSeconds()).slice(-2);
+
+                  c.createDate =
+                    createDate.getFullYear() +
+                    "-" +
+                    (createDate.getMonth() + 1) +
+                    "-" +
+                    createDate.getDate() +
+                    " " +
+                    hr +
+                    ":" +
+                    min +
+                    ":" +
+                    sec;
+
+                  hr = ("0" + updateDate.getHours()).slice(-2);
+                  min = ("0" + updateDate.getMinutes()).slice(-2);
+                  sec = ("0" + updateDate.getSeconds()).slice(-2);
+
+                  c.updateDate =
+                    updateDate.getFullYear() +
+                    "-" +
+                    (updateDate.getMonth() + 1) +
+                    "-" +
+                    updateDate.getDate() +
+                    " " +
+                    hr +
+                    ":" +
+                    min +
+                    ":" +
+                    sec;
+
+                  findByIdArr.push(c);
+                });
+
+                console.log(findByIdArr);
+              });
+          };
+
+          const showProduct = (event) => {
+            listArr.splice(0, listArr.length);
+
+            event.preventDefault();
+
+            let formData = [];
+            let object = {};
+
+            formData = new FormData(document.getElementById("product"));
+            formData.forEach((value, key) => (object[key] = value));
+
+            let json = JSON.stringify(object);
+
+            console.log("json:", json);
+            // JSON.parse("{}");
+
+            fetch("http://localhost:8080/products/all", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: json,
+            })
+              .then((res) => {
+                return res.json();
+              })
+              .then((result) => {
+                console.log(result);
+                result.forEach((c) => {
+                  let createDate = new Date(c.createDate);
+                  let updateDate = new Date(c.updateDate);
+
+                  hr = ("0" + createDate.getHours()).slice(-2);
+                  min = ("0" + createDate.getMinutes()).slice(-2);
+                  sec = ("0" + createDate.getSeconds()).slice(-2);
+
+                  c.createDate =
+                    createDate.getFullYear() +
+                    "-" +
+                    (createDate.getMonth() + 1) +
+                    "-" +
+                    createDate.getDate() +
+                    " " +
+                    hr +
+                    ":" +
+                    min +
+                    ":" +
+                    sec;
+
+                  hr = ("0" + updateDate.getHours()).slice(-2);
+                  min = ("0" + updateDate.getMinutes()).slice(-2);
+                  sec = ("0" + updateDate.getSeconds()).slice(-2);
+
+                  c.updateDate =
+                    updateDate.getFullYear() +
+                    "-" +
+                    (updateDate.getMonth() + 1) +
+                    "-" +
+                    updateDate.getDate() +
+                    " " +
+                    hr +
+                    ":" +
+                    min +
+                    ":" +
+                    sec;
+
+                  listArr.push(c);
+                });
+
+                console.log(listArr);
+              });
+          };
+
+          const deleteProduct = (event) => {
+            console.log(event.target.value);
+            let id = event.target.value;
+
+            fetch("http://localhost:8080/products/" + id, {
+              method: "DELETE",
+            });
+          };
+
+          return {
+            addProduct,
+            editProduct,
+            showProduct,
+            deleteProduct,
+            listArr,
+            findById,
+            findByIdArr,
+          };
+        },
+      };
+
+      Vue.createApp(App).mount("#app");
+    </script>
+  </body>
 </html>
